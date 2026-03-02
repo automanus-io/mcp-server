@@ -1,0 +1,58 @@
+{
+  "name": "@automanus/mcp-server",
+  "version": "1.2.0",
+  "description": "MCP server for AutoManus - Create AI sales agents with WhatsApp and Webchat via Claude Desktop, Cursor, and other AI coding tools. Build sales chatbots instantly.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "automanus-mcp": "dist/index.js"
+  },
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "automanus",
+    "ai-agent",
+    "sales-agent",
+    "chatbot",
+    "whatsapp-bot",
+    "webchat",
+    "ai-chatbot",
+    "sales-chatbot",
+    "customer-service",
+    "lead-generation",
+    "claude",
+    "claude-desktop",
+    "cursor",
+    "anthropic"
+  ],
+  "author": "AutoManus <hello@automanus.io>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/automanus-io/mcp-server"
+  },
+  "homepage": "https://automanus.io/docs/mcp",
+  "bugs": {
+    "url": "https://github.com/automanus-io/mcp-server/issues"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
