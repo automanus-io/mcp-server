@@ -1,6 +1,6 @@
 {
   "name": "@automanus/mcp-server",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "description": "MCP server for AutoManus - Create AI sales agents with WhatsApp and Webchat via Claude Desktop, Cursor, and other AI coding tools. Build sales chatbots instantly.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

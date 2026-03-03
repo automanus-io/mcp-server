@@ -159,10 +159,58 @@ async function handleCreateSalesAgent(args: {
     // For new users, use claim_url for the dashboard link (dashboard_url requires auth)
     const manageUrl = data.is_new_user ? data.claim_url : data.dashboard_url;
 
+    // Check for sandbox mode (agent not verified)
+    const trustLevel = data.trust_level as string | undefined;
+    const isSandbox = data.is_sandbox === true || trustLevel === 'sandbox';
+    const displayName = (data.display_name as string) || data.agent_name;
+    const verificationInstructions = data.verification_instructions as {
+      message?: string;
+      dns_txt?: string;
+      meta_tag?: string;
+      dashboard_url?: string;
+    } | undefined;
+
+    // Check for missing content hints (e.g., pricing page couldn't be scraped due to JS rendering)
+    const missingHints = data.missing_content_hints as string[] | undefined;
+    const hasMissingContent = missingHints && missingHints.length > 0;
+
+    // Build the message based on user status, sandbox mode, and missing content
+    let message: string;
+
+    if (isSandbox) {
+      // Sandbox mode: explain the (sandbox) tag
+      message = `Agent created as "${displayName}".\n\n`;
+      message += `⚠️ SANDBOX MODE: The (sandbox) tag is visible to users because your email domain doesn't match the website domain.\n\n`;
+      message += `To remove the tag, verify domain ownership:\n`;
+      if (verificationInstructions?.dns_txt) {
+        message += `• DNS: ${verificationInstructions.dns_txt}\n`;
+      }
+      if (verificationInstructions?.meta_tag) {
+        message += `• Meta tag: ${verificationInstructions.meta_tag}\n`;
+      }
+      if (verificationInstructions?.dashboard_url) {
+        message += `\nVerify at: ${verificationInstructions.dashboard_url}`;
+      }
+      if (data.is_new_user) {
+        message += `\n\nCheck ${email} for a magic link to manage your agent.`;
+      }
+    } else if (data.is_new_user) {
+      message = `Agent "${displayName}" created and verified! ✓\n\nCheck ${email} for a magic link to claim your agent.`;
+    } else {
+      message = `Agent "${displayName}" created, verified, and added to your account. ✓`;
+    }
+
+    // Append missing content prompt if needed
+    if (hasMissingContent) {
+      const missingList = missingHints.join(' and ');
+      message += `\n\nNote: I couldn't extract ${missingList} info from the website (it may use JavaScript rendering). Would you like to share your ${missingList} details so I can add them to the knowledge base?`;
+    }
+
     return JSON.stringify({
       success: true,
       agent_id: data.agent_id,
       agent_name: data.agent_name,
+      display_name: displayName,
       company_name: data.company_name,
       webchat_embed_code: data.webchat_embed_code,
       whatsapp_link: data.whatsapp_link,
@@ -170,9 +218,14 @@ async function handleCreateSalesAgent(args: {
       knowledge_base_count: data.knowledge_base_count,
       is_new_user: data.is_new_user,
       claim_url: data.claim_url,
-      message: data.is_new_user
-        ? `Agent created! Check ${email} for a magic link to claim your agent.`
-        : 'Agent created and added to your account.',
+      // Sandbox trust system fields
+      trust_level: trustLevel,
+      is_sandbox: isSandbox,
+      verification_code: data.verification_code,
+      verification_instructions: verificationInstructions,
+      // Missing content hints
+      missing_content_hints: hasMissingContent ? missingHints : undefined,
+      message,
     });
   } catch (error) {
     return JSON.stringify({
