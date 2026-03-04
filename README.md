@@ -162,15 +162,18 @@ When you create an agent, you receive:
 
 ## Links
 
+- [📺 Watch Demo](https://www.youtube.com/watch?v=4Mdzehq4ghg&list=PLE9hy4A7ZTmpGq7GHf5tgGFWh2277AeDR)
 - [Documentation](https://automanus.io/docs/mcp)
 - [Dashboard](https://automanus.io/dashboard)
 - [API Reference](https://automanus.io/docs/api)
 - [GitHub](https://github.com/automanus-io/mcp-server)
+- [npm Package](https://www.npmjs.com/package/@automanus/mcp-server)
 
-## Support
+## Community
 
+- [Discord](https://discord.com/invite/tGsJ2nJH69) - Get help, share feedback, and connect with other users
+- [GitHub Issues](https://github.com/automanus-io/mcp-server/issues) - Report bugs
 - Email: hello@automanus.io
-- GitHub Issues: [Report a bug](https://github.com/automanus-io/mcp-server/issues)
 
 ## License
 
