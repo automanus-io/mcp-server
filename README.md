@@ -130,7 +130,7 @@ With an API key, agents are created directly under your account:
 }
 ```
 
-Get your API key from [automanus.io/dashboard](https://automanus.io/dashboard).
+Get your API key from [automanus.io/dashboard/settings/api](https://automanus.io/dashboard/settings/api).
 
 ## What You Get
 
