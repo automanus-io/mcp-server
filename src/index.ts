@@ -81,6 +81,33 @@ const tools = [
       required: ['agent_id', 'title', 'content'],
     },
   },
+  {
+    name: 'generate_qr_code',
+    description:
+      'Generate a QR code for a URL or WhatsApp link. Returns a URL to the QR code image that can be opened in a browser or downloaded.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        url: {
+          type: 'string',
+          description: 'Direct URL to encode in the QR code (e.g., https://example.com)',
+        },
+        phone: {
+          type: 'string',
+          description: 'WhatsApp phone number with country code, no + sign (e.g., 16506053956). Used if url is not provided.',
+        },
+        message: {
+          type: 'string',
+          description: 'Pre-filled WhatsApp message text. Used with phone parameter.',
+        },
+        size: {
+          type: 'number',
+          description: 'QR code size in pixels (100-1000, default 300)',
+        },
+      },
+      required: [],
+    },
+  },
 ];
 
 // Get auth config from environment
@@ -292,6 +319,45 @@ async function handleAddKnowledge(args: {
   }
 }
 
+// Handler for generate_qr_code tool
+const QR_API_BASE_URL = 'https://automanus.io';
+const DEFAULT_WHATSAPP_PHONE = '16506053956';
+
+async function handleGenerateQRCode(args: {
+  url?: string;
+  phone?: string;
+  message?: string;
+  size?: number;
+}): Promise<string> {
+  const size = Math.min(Math.max(args.size || 300, 100), 1000);
+
+  let encodedUrl: string;
+
+  if (args.url) {
+    // Direct URL provided
+    encodedUrl = args.url;
+  } else {
+    // Generate WhatsApp URL
+    const phone = (args.phone || DEFAULT_WHATSAPP_PHONE).replace(/\D/g, '');
+    const message = args.message || '';
+
+    encodedUrl = message
+      ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+      : `https://wa.me/${phone}`;
+  }
+
+  // Generate QR code URL
+  const qrUrl = `${QR_API_BASE_URL}/api/qr?url=${encodeURIComponent(encodedUrl)}&size=${size}`;
+
+  return JSON.stringify({
+    success: true,
+    qr_url: qrUrl,
+    encoded_url: encodedUrl,
+    size: size,
+    instructions: 'Open the qr_url in a browser to view or download the QR code image.',
+  });
+}
+
 // Main server setup
 async function main() {
   const server = new Server(
@@ -326,6 +392,11 @@ async function main() {
       case 'add_knowledge':
         result = await handleAddKnowledge(
           args as { agent_id: string; title: string; content: string; item_type?: string; category?: string }
+        );
+        break;
+      case 'generate_qr_code':
+        result = await handleGenerateQRCode(
+          args as { url?: string; phone?: string; message?: string; size?: number }
         );
         break;
       default:
